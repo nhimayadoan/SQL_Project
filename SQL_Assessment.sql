@@ -27,17 +27,17 @@ from dbo.pos_sales_header
 group by eomonth (transaction_date)
 order by end_date_of_month
 
--- Cau 1
+-- Q1
 SELECT *
 from dbo.city
 where name = N'Hà Nội'
 
--- Cau 2
+-- Q2
 SELECT name
 FROM dbo.city
 WHERE code = 'HTH'
 
--- Cau 3
+-- Q3
 -- Calculate the total number of provinces in Vietnam
 SELECT COUNT (DISTINCT c.name) AS TotalProvinces
 FROM dbo.city c 
@@ -60,20 +60,20 @@ FROM ProvincesInAreas, (
 
     
 
--- Cau 4
+-- Q4
 select count (distinct name)
 from dbo.city
 where name like N'Quảng%'
 
 
--- Cau 5
+-- Q5
 select c.name, c.id
 from dbo.city c
 join dbo.sub_region sr on c.sub_region_id = sr.id
 where sr.name = N'Đồng bằng sông Hồng'
 
 
--- Cau 6
+-- Q6
 select count (c.name)
 from dbo.city c 
 join dbo.sub_region sr on sr.id = c.sub_region_id
@@ -81,7 +81,7 @@ join dbo.region r on r.id = sr.region_id
 where r.name = N'Miền Trung'
 
 
--- Cau 7 
+-- Q7 
 SELECT COUNT (s.name) AS NbStores, s.district_id, d.name
 FROM dbo.store s 
 JOIN dbo.city c on c.id = s.city_id
@@ -90,7 +90,7 @@ GROUP BY s.district_id, d.name
 ORDER BY COUNT (s.name) DESC 
 
 
--- Cau 8
+-- Q8
 select count (name), ward_id
 from dbo.store
 group by ward_id
@@ -106,7 +106,7 @@ GROUP BY s.ward_id, w.name
 HAVING COUNT (s.name) >10 
 
 
--- Cau 9
+-- Q9
 
 select count (id), district_id
 from dbo.ward 
@@ -145,7 +145,7 @@ ORDER BY Ratio DESC
 
 
 
--- Cau 10
+-- Q10
 DECLARE @lat1 FLOAT, @long1 FLOAT;
 SELECT @lat1 = latitude, @long1 = longitude
 FROM dbo.store
@@ -159,7 +159,7 @@ ORDER BY distance;
 
 -- Short Answer
 
--- Cau 11
+-- Q11
 SELECT r.code AS region_code, r.name AS region_name, 
     sr.code AS sub_region_code, sr.name AS sub_region_name, 
     c.id AS city_id, c.code AS city_code, c.name AS city_name
@@ -169,7 +169,7 @@ JOIN dbo.region r ON r.id = sr.region_id
 WHERE r.code = 'MB'
 ORDER BY sub_region_code ASC, region_name ASC, city_name ASC
 
---Cau 12
+-- Q12
 select TOP (100) *
 from dbo.customer 
 
@@ -193,7 +193,7 @@ GROUP BY c.id, c.code, c.full_name, c.first_name
 ORDER BY total_amount DESC, c.full_name ASC
 
 
--- Cau 13 -- CASE WHEN 
+-- Q13 -- CASE WHEN 
 SELECT s.document_code, s.store_id, st.code, st.name, s.transaction_date, c.id, c.full_name,
     c.first_name, SUM (s.total_amount) AS total_amount,
     CASE WHEN 0.5 * SUM (s.total_amount) >= 1000000 THEN 1000000 ELSE 0.5 * SUM (s.total_amount) END AS promotion_amount
@@ -207,7 +207,7 @@ GROUP BY c.id, c.full_name, s.document_code, s.store_id, st.code, st.name, s.tra
 ORDER BY promotion_amount DESC 
 
 
--- Cau 14
+-- QCau 14
 SELECT p.id AS product_sku_id, l.customer_id, SUM (l.unit_price * l.quantity) AS purchase_amount,
     SUM (l.quantity) AS quantity, COUNT (*) AS nb_purchases, AVG (l.quantity) AS avg_quantity_per_purchases
 FROM dbo.pos_sales_line l 
@@ -217,7 +217,7 @@ AND YEAR (l.transaction_date) = 2020
 GROUP BY l.customer_id, p.id
 ORDER BY l.customer_id ASC
 
--- Cau 15
+-- QCau 15
 SELECT TOP (20) YEAR (l.transaction_date) AS year, p.id AS product_sku_id, p.code, p.name, p.country, p.brand, l.unit_price, 
     SUM (l.quantity) AS quantity, RANK () OVER (PARTITION BY YEAR (l.transaction_date) ORDER BY SUM (l.unit_price*quantity) DESC) AS rk
 FROM dbo.product_sku p 
@@ -231,7 +231,7 @@ GROUP BY p.id, p.code, p.name, p.country, p.brand, l.unit_price, YEAR (l.transac
 ORDER BY YEAR (l.transaction_date) DESC, rk ASC
 
 
--- Cau 16
+-- QCau 16
 SELECT s.day_work, s.store_id, st.name, s.shift_name, s.sales_person_id, p.code, p.full_name, p.first_name, p.gender
 FROM dbo.emp_shift_schedule s 
 JOIN dbo.sales_person p ON p.id = s.sales_person_id
@@ -240,16 +240,16 @@ WHERE s.shift_name = N'Chiều'
 AND st.name = N'VM+ HNI Cụm 6 Xã Sen Chiểu'
 AND s.day_work = '2020-06-13'
 
--- Cau 17
+-- Q17
 
 
--- Cau 18
+-- Q18
 
 
--- Cau 19
+-- Q19
 
 
--- Cau 20
+-- Q20
 SELECT TOP (3) h.store_id, s.code AS store_code, s.name AS store_name, SUM (h.total_line_amount) AS sales_amount_10_2020
 FROM dbo.store s 
 JOIN dbo.pos_sales_header h ON s.id = h.store_id
